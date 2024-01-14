@@ -34,14 +34,19 @@ namespace task2{
                     case(2):
                     {
                         List<SBAccount> accs = br.GetAllAccounts();
-                        System.Console.WriteLine("\nAll account details are:");
-                        if(accs.Count==0){
-                            System.Console.WriteLine("No accounts found");
+                        try{
+                            if(accs.Count==0){
+                                throw new AccountNotFoundException("\nNo account in records!");
+                            }
+                            System.Console.WriteLine("\nAll account details are:");
+                            foreach(SBAccount item in accs)
+                            {
+                                System.Console.WriteLine(item);
+                            }
                             break;
                         }
-                        foreach(SBAccount item in accs)
-                        {
-                            System.Console.WriteLine(item);
+                        catch(Exception e){
+                            System.Console.WriteLine(e.Message);
                         }
                         break;
                     }
@@ -50,11 +55,15 @@ namespace task2{
                         System.Console.WriteLine("\nEnter the account number: ");
                         int accno = Convert.ToInt32(Console.ReadLine());
                         SBAccount sba = br.GetAccountDetails(accno);
-                        if(sba==null){
-                            System.Console.WriteLine("No accounts found");
-                            break;
+                        try{
+                            if(sba==null){
+                                throw new AccountNotFoundException("\nNo account found!");
+                            }
+                            System.Console.WriteLine(sba);
                         }
-                        System.Console.WriteLine(sba);
+                        catch(Exception e){
+                            System.Console.WriteLine(e.Message);
+                        }
                         break;
                     }
                     case(4):
@@ -79,15 +88,19 @@ namespace task2{
                     {
                         System.Console.WriteLine("\nEnter the account number: ");
                         int accno = Convert.ToInt32(Console.ReadLine());
+                        try{
                         List<SBTransaction> sbt = br.GetTransactions(accno);
                         if(sbt.Count==0){
-                            System.Console.WriteLine("No records found");
-                            break;
+                            throw new NoTransactionFoundException("No transactions are found!");
                         }
                         System.Console.WriteLine("All the transactions for account number "+accno+" are:");
                         foreach(SBTransaction item in sbt)
                         {
                             System.Console.WriteLine(item);
+                        }
+                        }
+                        catch(Exception e){
+                            System.Console.WriteLine(e.Message);
                         }
                         break;                        
                     }
@@ -97,7 +110,7 @@ namespace task2{
                         break;
                     }
                     default:
-                        Environment.Exit(0);
+                        System.Console.WriteLine("\nEnter valid choice!");;
                         break;
                 }
             }
