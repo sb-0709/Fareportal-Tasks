@@ -18,6 +18,7 @@ namespace task2{
             return null;
         }
         public void DepositAmount(int accno, decimal amt){
+            try{
             foreach(var item in sba){
                 if(item.Accno==accno){
                     item.Curr_balance = item.Curr_balance + amt;
@@ -25,20 +26,42 @@ namespace task2{
                     SBTransaction trans = new SBTransaction(transid, DateTime.Now, accno, amt, "Deposit");
                     sbt.Add(trans);
                     System.Console.WriteLine("Amount deposited successfully!!");
-                    break;
+                    return;
                 }
+            }
+            throw new AccountNotFoundException("No account found!");
+            }
+            catch(Exception e){
+                System.Console.WriteLine(e.Message);
             }
         }
         public void WithdrawAmount(int accno, decimal amt){
+            try{
             foreach(var item in sba){
                 if(item.Accno==accno){
-                    item.Curr_balance = item.Curr_balance - amt;
-                    transid++;
-                    SBTransaction trans = new SBTransaction(transid, DateTime.Now, accno, amt, "Withdraw");
-                    sbt.Add(trans);
-                    System.Console.WriteLine("Amount withdrawn successfully!!");
-                    break;
+                    try{
+                        if(item.Curr_balance>=amt){
+                            item.Curr_balance = item.Curr_balance - amt;
+                            transid++;
+                            SBTransaction trans = new SBTransaction(transid, DateTime.Now, accno, amt, "Withdraw");
+                            sbt.Add(trans);
+                            System.Console.WriteLine("Amount withdrawn successfully!!");
+                            return;
+                        }
+                        else{
+                            throw new BalanceNotSufficientException("Account balance is not sufficient!");
+                        }
+                    }
+                    catch(Exception e){
+                        System.Console.WriteLine(e.Message);
+                        return;
+                    } 
                 }
+            }
+            throw new AccountNotFoundException("No account found!");
+            }
+            catch(Exception e){
+                System.Console.WriteLine(e.Message);
             }
         }
         public List<SBTransaction> GetTransactions(int accno){
